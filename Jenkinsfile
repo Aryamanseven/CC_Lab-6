@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sh '''
                 docker rmi -f backend-app || true
-                docker build -t backend-app CC_LAB-6/backend
+                docker build -t backend-app backend
                 '''
             }
         }
