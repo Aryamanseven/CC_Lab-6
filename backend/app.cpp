@@ -41,16 +41,22 @@ int main() {
     while(true) {
         int client_fd = accept(server_fd, NULL, NULL);
         if (client_fd < 0) continue;
-        
-        // Simple HTTP response
-        std::string response = "HTTP/1.1 200 OK\r\n";
-        response += "Content-Type: text/plain\r\n";
-        response += "Connection: close\r\n\r\n";
-        response += "Served by backend: " + std::string(hostname) + "\n";
-        
+
+        char buffer[1024];
+        memset(buffer, 0, sizeof(buffer));
+
+        // IMPORTANT: Read incoming HTTP request
+        read(client_fd, buffer, sizeof(buffer));
+
+        std::string response =
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/plain\r\n"
+            "Connection: close\r\n\r\n"
+            "Served by backend: " + std::string(hostname) + "\n";
+
         send(client_fd, response.c_str(), response.length(), 0);
-        shutdown(client_fd, SHUT_WR);
-        usleep(1000);   // small delay (1ms)
+
+        shutdown(client_fd, SHUT_RDWR);
         close(client_fd);
     }
     
