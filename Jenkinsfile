@@ -1,6 +1,8 @@
 pipeline {
     agent any
+
     stages {
+
         stage('Build Backend Image') {
             steps {
                 sh '''
@@ -20,6 +22,9 @@ pipeline {
                 docker run -d --name backend2 --network app-network backend-app
 
                 sleep 5
+
+                docker ps -a
+                docker logs backend2 || true
                 '''
             }
         }
